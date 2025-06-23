@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 import pika,os,json
-from dotenv import load_dotenv
 from datetime import datetime
 from uuid import uuid4
-#variables de entorno
-load_dotenv('.env')
-rmq_user =os.getenv('RABBITMQ_USER')
-rmq_pass =os.getenv('RABBITMQ_PASSWORD')
-rmq_host =os.getenv('RABBITMQ_HOST')
-rmq_port =os.getenv('RABBITMQ_PORT')
+from utils.config import load_rabbitmq_config
+
+# Cargar la configuración de RabbitMQ desde el archivo .env
+config = load_rabbitmq_config()
 
 mensaje = {
     'id':str(uuid4()),
@@ -21,8 +18,10 @@ mensaje_json = json.dumps(mensaje)
 
 
 #Nos conectamos al broker
-credentials = pika.PlainCredentials(rmq_user,rmq_pass)
-parameters = pika.ConnectionParameters(rmq_host, rmq_port, '/', credentials)
+credentials = pika.PlainCredentials(config['user'],config['password'])
+parameters = pika.ConnectionParameters(
+    config['host'],
+    config['port'], '/', credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 #Mandamos el mensaje
@@ -33,3 +32,6 @@ channel.basic_publish(exchange='',
                       body = mensaje_json)
 print("Su transaccion ha sido enviado")
 connection.close()
+
+#if __name__ == '__main__':
+    #send_payment_message()

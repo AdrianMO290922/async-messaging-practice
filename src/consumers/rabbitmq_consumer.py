@@ -1,8 +1,16 @@
 import pika, sys, os
+from utils.config import load_rabbitmq_config
+
+
 def main():
+    config = load_rabbitmq_config()
     #Nos conectamos al broker
-    credentials = pika.PlainCredentials('rabbit_manager','rabit#')
-    parameters = pika.ConnectionParameters('localhost', 5672, '/', credentials)
+    credentials = pika.PlainCredentials(config['user'], config['password'])
+    parameters = pika.ConnectionParameters(
+        host=config['host'],
+        port=config['port'],
+        credentials=credentials
+    )
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     #Buena práctica volver a declararla, para que no haya problemas en caso de que no se haya corrido el primero
@@ -18,7 +26,7 @@ def main():
     #Después entraremos en un ciclo en lo que esperamoslos mensajes de la cola
     print('Esperando mensajes. Para salir presione CTRL+C')
     channel.start_consuming()
-    #El siguiente código es para que detecte errores y los maneje
+#El siguiente código es para que detecte errores y los maneje
 if __name__ == '__main__':
         try:
             main()
