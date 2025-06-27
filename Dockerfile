@@ -10,3 +10,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el código fuente, lo copea de la dirección actual al la del directorio de trabajo
 COPY src/ ./src/
+# Comando por defecto (puedes sobrescribirlo al ejecutar)
+CMD ["python", "./src/producer/rabbitmq_producer.py"]

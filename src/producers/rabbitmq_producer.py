@@ -2,7 +2,8 @@
 import pika,os,json
 from datetime import datetime
 from uuid import uuid4
-from utils.config import load_rabbitmq_config
+from src.utils.config import load_rabbitmq_config
+
 
 # Cargar la configuración de RabbitMQ desde el archivo .env
 config = load_rabbitmq_config()
@@ -25,10 +26,10 @@ parameters = pika.ConnectionParameters(
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 #Mandamos el mensaje
-channel.queue_declare(queue='transaccion_pago_2')
+channel.queue_declare(queue='transaccion_pago_4')
 #Nunca se mandan directo, necesita pasar por el extchange
 channel.basic_publish(exchange='',
-                      routing_key = 'transaccion_pago_2',
+                      routing_key = 'transaccion_pago_4',
                       body = mensaje_json)
 print("Su transaccion ha sido enviado")
 connection.close()

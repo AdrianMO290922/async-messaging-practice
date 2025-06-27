@@ -1,5 +1,5 @@
 import pika, sys, os
-from utils.config import load_rabbitmq_config
+from src.utils.config import load_rabbitmq_config
 
 
 def main():
@@ -14,13 +14,13 @@ def main():
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     #Buena práctica volver a declararla, para que no haya problemas en caso de que no se haya corrido el primero
-    channel.queue_declare(queue = 'transaccion_pago')
+    channel.queue_declare(queue = 'transaccion_pago_4')
     #Con esta función podremos recibir el mensaje 
     def callback(ch, method, properties,body):
         print(f"Recibido {body}")
     #Ahora debemmos de decir cual en partucular la funciónque queremos llamar
     print('Antes de consumir')
-    channel.basic_consume(queue = 'transaccion_pago',
+    channel.basic_consume(queue = 'transaccion_pago_4',
                         auto_ack = True,
                         on_message_callback = callback)
     #Después entraremos en un ciclo en lo que esperamoslos mensajes de la cola
