@@ -1,0 +1,37 @@
+version: '3.12'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gestión
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+
+  producer:
+    build: .
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    volumes:
+      - ./.env:/app/.env
+    command: python ./src/producers/rabbitmq_producer.py
+
+  consumer:
+    build: .
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    volumes:
+      - ./.env:/app/.env
+    command: python ./src/consumers/rabbitmq_consumer.py
